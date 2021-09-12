@@ -20,7 +20,7 @@ type User struct {
 	Year				int		`json:"year"`
 }
 
-var userLogged = []User{}
+var userLogged []User = []User{}
 
 // Users slice to seed record users data.
 var users = []User{
