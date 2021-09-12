@@ -20,7 +20,7 @@ type User struct {
 	Year				int		`json:"year"`
 }
 
-var userLogged = nil
+var userLogged = []User{}
 
 // Users slice to seed record users data.
 var users = []User{
@@ -43,20 +43,21 @@ func main() {
 }
 
 func defaultRedirect(c *gin.Context) {
-	c.Redirect("/users")
+	c.Redirect(http.StatusMovedPermanently, "/users")
 }
 
 func loadViewLogin(c *gin.Context) {
 	if(userLogged != nil) {
 		c.HTML(http.StatusOK, "view.html", gin.H {
-			"username": userLogged.Username,
+			"user": userLogged,
 			"users": users,
 		})
 		return
+	} else {
+		c.HTML(http.StatusOK, "login.html", gin.H {
+			"message": " ",
+		})
 	}
-	c.HTML(http.StatusOK, "login.html", gin.H {
-		"message": " ",
-	})
 }
 
 func loginUser(c *gin.Context) {
@@ -67,7 +68,7 @@ func loginUser(c *gin.Context) {
 		for _, a := range users {
 			if a.Username == username {
 				if a.Password == password {
-					userLogged = a
+					userLogged := a
 					c.HTML(http.StatusOK, "view.html", gin.H {
 						"username": userLogged.Username,
 						"users": users,
@@ -99,8 +100,6 @@ func userRegister(c *gin.Context) {
 }
 
 func logoutUser(c *gin.Context) {
-	userLogged = nil;
-	c.HTML(http.StatusOK, "login.html", gin.H {
-		"message": " ",
-	})
+	userLogged = []User{};
+	c.Redirect(http.StatusMovedPermanently, "/users")
 }
