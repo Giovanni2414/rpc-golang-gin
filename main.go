@@ -20,7 +20,7 @@ type User struct {
 	Year				int		`json:"year"`
 }
 
-var userLogged = User{}
+var userLogged = nil
 
 // Users slice to seed record users data.
 var users = []User{
@@ -31,16 +31,29 @@ var users = []User{
 // Creating the handler functions
 func main() {
 	router := gin.Default()
-	router.LoadHTMLFiles("login.html", "register.html")
+	router.LoadHTMLFiles("login.html", "register.html", "view.html")
+	router.GET("/", defaultRedirect)
     router.GET("/users", loadViewLogin)
 	router.POST("/users", loginUser)
 	router.GET("/users/register", loadViewRegister)
 	router.POST("/users/register", userRegister)
+	router.GET("/users/logout", logoutUser)
 
 	router.Run("localhost:8080")
 }
 
+func defaultRedirect(c *gin.Context) {
+	c.Redirect("/users")
+}
+
 func loadViewLogin(c *gin.Context) {
+	if(userLogged != nil) {
+		c.HTML(http.StatusOK, "view.html", gin.H {
+			"username": userLogged.Username,
+			"users": users,
+		})
+		return
+	}
 	c.HTML(http.StatusOK, "login.html", gin.H {
 		"message": " ",
 	})
@@ -54,8 +67,10 @@ func loginUser(c *gin.Context) {
 		for _, a := range users {
 			if a.Username == username {
 				if a.Password == password {
-					c.HTML(http.StatusOK, "login.html", gin.H {
-						"message": "You logged in!",
+					userLogged = a
+					c.HTML(http.StatusOK, "view.html", gin.H {
+						"username": userLogged.Username,
+						"users": users,
 					})
 					return
 				}
@@ -81,4 +96,11 @@ func loadViewRegister(c *gin.Context) {
 
 func userRegister(c *gin.Context) {
 
+}
+
+func logoutUser(c *gin.Context) {
+	userLogged = nil;
+	c.HTML(http.StatusOK, "login.html", gin.H {
+		"message": " ",
+	})
 }
