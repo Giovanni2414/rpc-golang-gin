@@ -34,6 +34,10 @@
     <div class="mx-auto col-md-5">
         <form action="/users/register" method="post">
             <div class="row">
+                {{ $length := len .message }}
+                {{ if ne $length 1 }}
+                    <div class="alert alert-warning mt-3">{{ .message }}</div>
+                {{ end }}
                 <div class="col">
                     <div class="form-group">
                         <label class="control-label">Username</label>

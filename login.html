@@ -31,9 +31,12 @@
         </nav>
     </header>
     <h1 class="text-center">Competitive Programing Network</h1> <br />
-    <h1>{{ .message }}</h1>
     <div class="d-flex justify-content-center">
         <div class="row">
+            {{ $length := len .message }}
+            {{ if ne $length 1 }}
+                <div class="alert alert-warning mt-3">{{ .message }}</div>
+            {{ end }}
             <form action="/users/" method="POST">
                 <div class="form-group">
                     <label class="control-label">Username</label>

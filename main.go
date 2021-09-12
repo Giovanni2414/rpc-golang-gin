@@ -93,11 +93,37 @@ func loginUser(c *gin.Context) {
 }
 
 func loadViewRegister(c *gin.Context) {
-	c.HTML(http.StatusOK, "register.html", nil)
+	c.HTML(http.StatusOK, "register.html", gin.H{
+		"message": " ",
+	})
 }
 
 func userRegister(c *gin.Context) {
-
+	username := c.PostForm("Username")
+	password := c.PostForm("Password")
+	confirm_password := c.PostForm("ConfirmPassword")
+	firstname := c.PostForm("Firstname")
+	lastname := c.PostForm("Lastname")
+	day := c.PostForm("Day")
+	month := c.PostForm("Month")
+	year := c.PostForm("Year")
+	if len(username) > 0 && len(password) > 0 && len(confirm_password) > 0 && len(firstname) > 0 && len(lastname) > 0 && len(day) > 0 && len(month) > 0 && len(year) > 0 {
+		if password == confirm_password {
+			var newUser User
+			/*var newUser = []User{
+				{Username: username, Password: password, ConfirmPassword: confirm_password, Firstname: firstname, Lastname: lastname, Day: strconv.Atoi(day), Month: strconv.Atoi(month), Year: strconv.Atoi(year)},
+			}*/
+			users = append(users, newUser)
+		} else {
+			c.HTML(http.StatusOK, "register.html", gin.H{
+				"message": "Passwords doesn't match",
+			})
+		}
+	} else {
+		c.HTML(http.StatusOK, "register.html", gin.H{
+			"message": "Fill all the camps below",
+		})
+	}
 }
 
 func logoutUser(c *gin.Context) {
