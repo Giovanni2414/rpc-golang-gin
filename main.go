@@ -4,6 +4,7 @@ package main
 import (
 	//"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	//"os"
@@ -109,11 +110,16 @@ func userRegister(c *gin.Context) {
 	year := c.PostForm("Year")
 	if len(username) > 0 && len(password) > 0 && len(confirm_password) > 0 && len(firstname) > 0 && len(lastname) > 0 && len(day) > 0 && len(month) > 0 && len(year) > 0 {
 		if password == confirm_password {
-			var newUser User
-			/*var newUser = []User{
-				{Username: username, Password: password, ConfirmPassword: confirm_password, Firstname: firstname, Lastname: lastname, Day: strconv.Atoi(day), Month: strconv.Atoi(month), Year: strconv.Atoi(year)},
-			}*/
-			users = append(users, newUser)
+			dayP, _ := strconv.Atoi(day)
+			monthP, _ := strconv.Atoi(month)
+			yearP, _ := strconv.Atoi(year)
+			newUser := []User{
+				{Username: username, Password: password, ConfirmPassword: confirm_password, Firstname: firstname, Lastname: lastname, Day: dayP, Month: monthP, Year: yearP},
+			}
+			users = append(users, newUser...)
+			c.HTML(http.StatusOK, "register.html", gin.H{
+				"message": "Te has registrado exitosamente!",
+			})
 		} else {
 			c.HTML(http.StatusOK, "register.html", gin.H{
 				"message": "Passwords doesn't match",
